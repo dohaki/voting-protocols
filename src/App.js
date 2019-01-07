@@ -1,26 +1,75 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Grommet, Box, DataTable, Text } from 'grommet';
+import { grommet } from 'grommet/themes';
+
+import * as scoringProtocolsUtils from './utils/scoringProtocols';
+
+import { SCORING_PROTOCOL_CANDIDATES, SCORING_PROTOCOL_VOTES } from './utils/data'
+
+const columns = [
+  {
+    property: 'candidate',
+    header: 'Candidate',
+    primary: true
+  },
+  {
+    property: 'pluralityScore',
+    header: 'Plurality',
+    align: 'center'
+  },
+  {
+    property: 'vetoScore',
+    header: 'Veto',
+    align: 'center'
+  },
+  {
+    property: 'kApprovalScore',
+    header: 'k-Approval',
+    align: 'center'
+  },
+  {
+    property: 'bordaScore',
+    header: 'Borda',
+    align: 'center'
+  }
+]
 
 class App extends Component {
+  state = {
+    data: []
+  }
+
+  componentDidMount() {
+    const allScoringProtocolScores = scoringProtocolsUtils.getAllScores(
+      SCORING_PROTOCOL_CANDIDATES,
+      SCORING_PROTOCOL_VOTES
+    )
+    this.setState({ data: allScoringProtocolScores })
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Grommet theme={grommet}>
+        <Box align="center" pad="large">
+          <Box pad={{ vertical: 'large' }}>
+            {
+              SCORING_PROTOCOL_VOTES.map((vote, i) => (
+                <Box direction="row" key={i}>
+                  <Text weight="bold">Vote {i + 1}:&nbsp;</Text>
+                  {
+                    vote.map((candidateInVote, j) => (
+                      <Text key={j}>
+                        {j !== 0 && '>'}&nbsp;{candidateInVote}&nbsp;
+                      </Text>
+                    ))
+                  }
+                </Box>
+              ))
+            }
+          </Box>
+          <DataTable columns={columns} data={this.state.data} />
+        </Box>
+      </Grommet>
     );
   }
 }
