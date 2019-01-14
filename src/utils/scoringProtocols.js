@@ -1,3 +1,9 @@
+/**
+ * Wrapper function which returns all scores using different protocols.
+ * @param {string[]} candidates - List of candidates represented by a string.
+ * @param {string[string[]]} votes - List of votes where a vote is represented by an ordered list of candidates.
+ * @param {number} k - Parameter for k-Approval protocol.
+ */
 export const getAllScores = (candidates, votes, k = 2) => {
   const pluralityScores = getPluralityScores(candidates, votes)
   const vetoScores = getVetoScores(candidates, votes)
@@ -36,6 +42,11 @@ export const getPluralityScores = (candidates, votes) => {
   })
 }
 
+/**
+ * Returns the plurality score vector for a single vote.
+ * @param {string[]} candidates - List of candidates.
+ * @param {string[]} vote - Single preference profile.
+ */
 export const getPluralityScoreMapOfVote = (candidates, vote) => {
   return candidates.reduce((pluralityScoreMap, candidateInVote) => {
     const positionOfCandidate = vote.indexOf(candidateInVote)
@@ -44,6 +55,11 @@ export const getPluralityScoreMapOfVote = (candidates, vote) => {
   })
 }
 
+/**
+ * Returns veto scores of given candidates and votes.
+ * @param {string[]} candidates - List of candidates represented by a string.
+ * @param {string[string[]]} votes - List of votes where a vote is represented by an ordered list of candidates.
+ */
 export const getVetoScores = (candidates, votes) => {
   const lastCandidates = votes.map(vote => vote[candidates.length - 1])
   return candidates.map(candidate => {
@@ -61,6 +77,12 @@ export const getVetoScores = (candidates, votes) => {
   })
 }
 
+/**
+ * Returns k-Approval scores of given candidates and votes.
+ * @param {string[]} candidates - List of candidates represented by a string.
+ * @param {string[string[]]} votes - List of votes where a vote is represented by an ordered list of candidates.
+ * @param {number} k - Parameter for k-Approval protocol.
+ */
 export const getKapprovalScores = (candidates, votes, k) => {
   const kCandidates = votes.map(vote => vote.slice(0, k)).flat()
   return candidates.map(candidate => {
@@ -78,6 +100,11 @@ export const getKapprovalScores = (candidates, votes, k) => {
   })
 }
 
+/**
+ * Returns borda scores of given candidates and votes.
+ * @param {string[]} candidates - List of candidates represented by a string.
+ * @param {string[string[]]} votes - List of votes where a vote is represented by an ordered list of candidates.
+ */
 export const getBordaScores = (candidates, votes) => {
   const bordaScoreMaps = votes.map(vote => getBordaScoreMapOfVote(candidates, vote))
   return candidates.map(candidate => {
@@ -92,6 +119,11 @@ export const getBordaScores = (candidates, votes) => {
   })
 }
 
+/**
+ * Returns the borda score vector of a single vote.
+ * @param {string[]} candidates - List of candidates represented by a string.
+ * @param {string[]} vote - Preference profile of a single voter.
+ */
 const getBordaScoreMapOfVote = (candidates, vote) => {
   return vote.reduce((bordaMap, candidateInVote, i) => {
     bordaMap[candidateInVote] = candidates.length - (i + 1)
